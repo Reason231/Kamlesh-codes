@@ -1,0 +1,134 @@
+## Things that we learned in the 19th June 
+
+## Steps 
+- First we created the db.config.js in the config folder.
+- After that we go to mongodb website and go to the database and click on connnect and after that we copy the url of compass
+- Then we paste that url on the .env file and setup the env file
+- Restart the server
+- After that we go to the database in the browser and click on browse collection and delete that db file (must)
+- Then we go the db.config.js and in that we wriiten some code.
+- Atlast we imported to the express.config.js
+- Then restart the server in terminal and you will see db is connected successfully.
+
+
+## ER Diagram
+This should be made in db.diagram.io website.
+- Entity
+    - Users
+        - auth
+        - customers
+        - sellers
+        - admin
+    - Product
+    - Category
+    - Brand
+    - Cart
+    - Order
+    - Payment Transcations
+
+    - Users
+        - id
+        - name
+        - email
+        - address
+        - password
+        - userProvider [google, facebook]
+        - userProviderId 
+        - phone
+        - role
+        - status
+        - activationToken
+        - activeFor
+        - forgetToken
+        - forgetActivationFor
+        - image
+        - createdAt
+        - updatedAt
+
+    - Category
+        - id
+        - name
+        - description
+        - createdAt
+        - updatedAt
+
+    - Brand
+        - id
+        - name
+        - description
+        - logo
+        - website
+        - createdAt
+        - updatedAt
+
+    - Cart
+        - id
+        - userId
+        - totalItems
+        - totalPrice
+        - createdAt
+        - updatedAt
+            - CartItem
+                - id 
+                - cartId
+                - productId
+                - quantity
+                - discount
+                - price
+                - createdAt
+                - updatedAt
+
+    - Order
+        - id
+        - userId
+        - orderDate
+        - shippingAddress
+        - billingAddress
+        -  totalAmount
+        - status
+        - paymentMethod
+        - shippingMethod
+        - trackingNumber
+        - expectedDeliveryDate
+        - createdAt
+        - updatedAt
+            - OrderItem
+                - id
+                - orderId
+                - productId
+                - quantity
+                - price
+                - discount (discount on the item, if any)
+                - createdAt
+                - updatedAt
+                - PaymentTransaction
+                - transactionDate
+                - amount
+                - paymentMethod
+                - transactionStatus
+                -  transactionId
+                - paymentGateway
+                - createdAt
+                - updatedAt
+
+        - Product
+            - id
+            - name
+            - description
+            - price
+            - quantity
+            - categoryId
+            - brandId
+            - weight
+            - color
+            - size
+            - material
+            - image
+            - status
+            - rating
+            - reviewsCount
+            - discount
+            - supplierId
+            - warrantyPeriod
+            - createdAt
+            - updatedAt
