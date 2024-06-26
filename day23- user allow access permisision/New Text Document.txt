@@ -1,0 +1,5 @@
+const response=pm.response.json()
+if (response.result.token){
+    pm.environment.set('access_token', response.result.token.access)
+    pm.environment.set('refresh_token', response.result.token.refresh)
+}
