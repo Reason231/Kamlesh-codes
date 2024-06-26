@@ -1,68 +1,135 @@
-const { GeneralStatus } = require("../../config/constants");
 const { randomString } = require("../../utilites/helpers");
 const userService = require("../user/user.service");
-const authService = require("./auth.service");
+const AuthService = require("./auth.service");
+const jwt = require("jsonwebtoken");
+const bcrypt=require('bcryptjs')
 
-class AuthController{
-    activateUser =async (req,res,next)=>{
-        try{
-            const token=req.params.token;                                 // auth rotuer ko params ko token leko 
-            const user=await authService.validateActivationToken(token)   // Taken from auth.service.js file. 6th step
+class AuthController {
+    activateUser = async (req, res, next) => {
+        try {
+            const token = req.params.token;
+            const user = await AuthService.validateActivationToken(token);
 
-            // day 20
-            // Provides the date in the timestap
-            const tokenCreatedAt=user.activeFor.getTime()          // It stores the data of getting the timestamp of when the user became active
-            const today=Date.now()                                 // 1st step . // Getting the current timestamp
+            // const tokenCreatedAt = user.activeFor.getTime();   // Askthis to sir
+            const tokenCreatedAt = user.activeFor;
+            const today = Date.now();
 
-            // Compares the data which proivdes the expiry
-            if(tokenCreatedAt<today){                              // 2nd step
-                throw{status:401,message:"Token expired"}
+            if (tokenCreatedAt < today) {
+                throw { status: 401, message: "Token expired" };
             }
 
-            // activating the account if the token isn't exprired  // 7th step
-            user.activationToken=null;
-            user.activeFor=null;
-            user.status=GeneralStatus.ACTIVE;
-            
-            await user.save()
+            user.activationToken = null;
+            user.activeFor = null;
+            user.status = GeneralStatus.ACTIVE;
+
+            await user.save();
 
             res.json({
-                resutl:null,
-                message:"Your account has been activated successfully. Please login to further process",
-                meta:null
-            })
+                result: null,
+                message: "Your account has been activated successfully. Please login to proceed further.",
+                meta: null
+            });
+        } catch (exception) {
+            next(exception);
         }
-        catch(exception){
-            next(exception)
-        }
-    }
+    };
 
-    // Generating the reactivation code if the previous token expired.   
-    resendActivationToken = async (req,res,next)=>{                       
+    resendActivationToken = async (req, res, next) => {
+        try {
+            const token = req.params.token || null; // corrected variable name 'token'
+            const user = await AuthService.validateActivationToken(token);
+
+            user.activationToken = randomString(100);
+            user.activeFor = new Date(Date.now() + (3 * 60 * 60 * 1000));
+
+            await user.save();
+
+            // Sending re-activation email
+            await userService.sendActivationEmail({
+                to: user.email,
+                name: user.name,
+                token: user.activationToken,
+                sub: "Re-activate your account"
+            });
+
+            res.json({
+                result: null,
+                message: "Activation token resent successfully.",
+                meta: null
+            });
+        } catch (exception) {
+            console.log("Auth.controller => resendActivationToken => Error", exception);
+            next(exception);
+        }
+    };
+
+    // Day 22
+    login = async (req, res, next) => {
+        try {
+            const { email, password } = req.body;
+            const userExists = await userService.getSingleUserByFilter({ email: email });  // it reads the db and provides email
+
+            if (!userExists) {
+                throw { status: 400, message: "Invalid credentials provided" };  // If the email doesn't exits in db
+            }
+
+            if (userExists && userExists.status === GeneralStatus.ACTIVE) {
+                if (bcrypt.compareSync(password, userExists.password)) {    // first argument reprents the password that is stored in db while registering and second represnets the pw of now while logging
+                    const token = jwt.sign({
+                        sub: userExists._id,
+                        type: "bearer"    // it can be "refresh" or "access"
+                    }, process.env.JWT_SECRET, {
+                        expiresIn: "3h"   // the jwt login token expiry time. It is used for short refrehment of token means if we only used this the user has to login again and again after 3hrs
+                    });
+
+                    const refreshToken = jwt.sign({
+                        sub: userExists._id,
+                        type: "bearer" 
+                    }, process.env.JWT_SECRET, {
+                        expiresIn: "1day"  // the login token expiry time . It is used for long-term refreshment
+                    });
+
+                    res.json({           // the response we get if we put the correct email and pw
+                        result: {
+                            userDetail: {
+                                _id: userExists._id,
+                                name: userExists.name,
+                                email: userExists.email,
+                                role: userExists.role,
+                                image: userExists.image
+                            }
+                        },
+                        token: {
+                            access: token,
+                            refresh: refreshToken
+                        },
+                        message: "You have successfully logged in.",
+                        meta: null
+                    });
+                } else {
+                    throw { status: 400, message: "Credentials don't match" };
+                }
+            } else {
+                throw { status: 400, message: "User not activated" };
+            }
+        } catch (exception) {
+            next(exception);
+        }
+
+    };
+        // day 23  i.e step 1 codes
+      getLoggedInUser = async (req,res,next)=>{
         try{
-            const params = req.params.token || null
-            const user=await authService.validateActivationToken(token)   // Taken from auth.service.js file  3rd step
-
-            // generating the new token
-            user.activationToken=randomString(100)                        // 4th step
-            user.activeFor=new Date(Date.now()+(3*60*60*1000))
-
-            await user.save()   // It updates cause user already exits in db else it creates the user if it doesn't exits
-
-            // Sending the email for re-activation                        // 5th step
-            await userService.sendActivationEMail({
-                to:user.email,
-                name:user.name,
-                token:user.activationToken,
-                sub:"Re-activate your account",
+            res.json({
+                result:req.authUser,   // Mathi ko custom key authUser
+                meta:null,
+                message:"Your profile"
             })
-
         }
         catch(exception){
-            console.log("Auth.controller => resendActivationToken => Error",exception)
             next(exception)
         }
-    }
+      }  
 }
 
-module.exports=new AuthController()
+module.exports = new AuthController();
