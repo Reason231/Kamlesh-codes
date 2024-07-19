@@ -12,27 +12,27 @@ const CategorySchema= new mongoose.Schema({
         required:true,
         unique:true
     },
-    image:String,
     status:{
         type:String,
         enum: [...Object.values(GeneralStatus)],
         default:GeneralStatus.INACTIVE
-    },
-    createdBy:{
-        type:mongoose.Types.ObjectId,
-        ref:"User",
-        default:null
     },
     parentID:{
         type:mongoose.Types.ObjectId,
         ref:"Category",                               // should be capital 
         default:null
     },
+    image:String,
     brands:[{
         type:mongoose.Types.ObjectId,
-        ref:"Brands",                               // should be capital 
+        ref:"Brand",
+        default:null                       // should be capital and Ensure the reference matches the model name. Means in the brand.model it should be brand model name
+    }],
+    createdBy:{
+        type:mongoose.Types.ObjectId,
+        ref:"User",
         default:null
-    }]
+    }
 
 },{
     timestamps:true,

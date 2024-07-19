@@ -6,6 +6,7 @@ const BannerSchema= new mongoose.Schema({
         required:true,
         unique:true,
         min:2,
+        max:15
     },
     link:{
         type:String,

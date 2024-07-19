@@ -8,6 +8,9 @@ const bannerRouter=require("../routing/routing.config")
 
 // body parsers
 app.use(express.json())  // it is must to write the data in postman body
+app.use(express.urlencoded({
+    extended:true
+})) 
 
 // router mount that is inserting routing folder
 app.use(router)     // here we inserted it through calling upper variable

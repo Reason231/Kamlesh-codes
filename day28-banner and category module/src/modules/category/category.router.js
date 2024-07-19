@@ -1,5 +1,5 @@
 
-const brandRouter = require('express').Router()
+const categoryRouter = require('express').Router()
 const { UserTypes } = require('../../config/constants');
 const { setPath, uploader } = require('../../middlewares/uploader.middleware');
 const {bodyValidator}=require('../../middlewares/validator.middleware');
@@ -23,7 +23,7 @@ categoryRouter.route("/:id")
     .get(checkLogin,allowUser([UserTypes.ADMIN]) ,categoryController.show)
     
     // category update
-    .put(checkLogin,allowUser([UserTypes.ADMIN], setPath("/category"), uploader.single("image"), bodyValidator(CategoryCreateDto)), categoryController.update)  // here it requires the uplaoder cause we need to change the logo if somebody wants to update it
+    .put(checkLogin,allowUser([UserTypes.ADMIN]),setPath("/category"),uploader.single("image"),bodyValidator(CategoryCreateDto),categoryController.update)
 
     // category delete
     .delete(checkLogin, allowUser([UserTypes.ADMIN]), categoryController.delete)

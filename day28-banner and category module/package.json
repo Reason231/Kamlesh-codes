@@ -1,21 +1,22 @@
 {
-  "name": "day5",
+  "name": "day28-banner-and-category-module",
   "version": "1.0.0",
+  "description": "- Copying brand modules and pasting in modules\r - Tespachi hami lea tyo copy modules lai banner name diye.\r - Aani banner.model ma naam diye pachi tesko bhira ko code ma k k chaini ra k k nachaini dbdiagram bata herera modify garchau\r - Anni tespachi saab file haru ma brand ko satta banner vanera lekhchau.\r - Tespachi banner.router, banner.controller ra banner.service file ma pani tesari nai code milaunchau.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "- brand router ma first ma code lekhe",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.4.4",
+    "mongoose": "^8.5.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.14",
     "slugify": "^1.6.6"

@@ -44,8 +44,8 @@ class BrandService {
     
     updateById=async(id,data)=>{
         try{
-            // const response= await BrandModel.findByIdAndUpdate(id, {$set:data}, {new:true})    It returns the new updated data 
-            const response= await BrandModel.findByIdAndUpdate(id, {$set:data})                   // This data contains the updated data
+            const response= await BrandModel.findByIdAndUpdate(id, {$set:data}, {new:true})    //It returns the new updated data 
+            // const response= await BrandModel.findByIdAndUpdate(id,{$set:data})             // This data contains the updated data
             return response
         }
         catch(exception){

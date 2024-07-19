@@ -46,7 +46,7 @@ class BrandController {
       const skip = (page - 1) * limit;
 
       // sorting
-      const sorting = { _id: desc }; // It gives the latest list. cause id is always incremental so if the latest list value is 21 if we make descending so the latest will come at top
+      const sorting = { _id: -1 }; // It gives the latest list. cause id is always incremental so if the latest list value is 21 if we make descending so the latest will come at top
 
       // search / filter
       let filter = {};
@@ -119,13 +119,14 @@ class BrandController {
     try{
         await this.#validateId(req)
 
-        const data=req.body   // upto here it recieve the old data
+        const data=req.body                // upto here it recieve the old data
         if(req.file){         
             data.image=req.file.filename   // here it updates the new image 
         }
 
         // updating
         const response=await brandSvc.updateById(this.#id, data)   // data contains the new updated data and response contains the old data
+        console.log(data)
 
         // It deletes the old data after updating the new data
         if(req.file){
@@ -156,7 +157,7 @@ class BrandController {
         }
 
         res.json({
-            result:null,
+            result:response,
             message:"Brand deleted successfully",
             meta:null
         })

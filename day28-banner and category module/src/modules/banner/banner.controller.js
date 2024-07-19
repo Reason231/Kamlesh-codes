@@ -13,10 +13,6 @@ class BannerController {
         data.image = req.file.filename;
       }
 
-      // Slug
-      data.slug = slugify(data.name, {
-        lower: true,
-      });
       data.createdBy = req.authUser._id;
 
       const banner = await bannerSvc.store(data);
@@ -130,6 +126,7 @@ class BannerController {
     }
   };
 
+
   delete = async (req, res, next) => {
     try {
       await this.#validateId(req);
@@ -151,34 +148,6 @@ class BannerController {
     }
   };
 
-  getBySlug = async (req, res, next) => {
-    try {
-      const slug = req.params.slug;
-      const banner = await bannerSvc.getSingleDataByFilter({
-        slug: slug,
-      });
-
-      if (!banner) {
-        throw { status: 404, message: "Banner doesn't exist" };
-      }
-
-      res.json({
-        result: {
-          detail: banner,
-          product: null,
-        },
-        meta: {
-          total: 0,
-          currentPage: 1,
-          limit: 15,
-          totalPages: 1,
-        },
-        message: "Banner detail with product",
-      });
-    } catch (exception) {
-      next(exception);
-    }
-  };
-}
+  }
 
 module.exports = new BannerController();

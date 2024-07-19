@@ -3,12 +3,14 @@ const userRouter=require("../modules/user/user.router")   // here we extract fil
 const bannerRouter=require("../modules/banner/banner.router")
 const authRouter=require('../modules/auth/auth.router')
 const brandRouter=require("../modules/brand/brand.router")
+const categoryRouter=require('../modules/category/category.router')
 
 router.use("/user",userRouter)  // here we used the variable so that the code can work and url defines the same url for all the routers
 router.use("/banner",bannerRouter)
 router.use("/auth",authRouter)
 router.use("/brand",brandRouter)
 router.use("/banner",bannerRouter)
+router.use("/category",categoryRouter)
 
 
 module.exports=router
